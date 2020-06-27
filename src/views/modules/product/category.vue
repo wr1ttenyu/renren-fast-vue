@@ -25,11 +25,23 @@ export default {
   methods: {
     handleNodeClick(data) {
       console.log(data);
+    },
+    // 获取数据列表
+    getCategoryData() {
+      this.dataListLoading = true;
+      this.$http({
+        url: this.$http.adornUrl("/product/category/list/tree"),
+        method: "get"
+      }).then(data => {
+        console.log(data);
+      });
     }
   },
   watch: {},
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+    this.getCategoryData();
+  },
   //生命周期 - 挂载完成（可以访问DOM元素）
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前

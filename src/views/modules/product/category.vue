@@ -1,9 +1,34 @@
 <template>
   <div>
-    <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+    <el-tree
+      :data="category"
+      :props="defaultProps"
+      :expand-on-click-node="false"
+      show-checkbox
+      node-key="catId"
+    >
+      <span class="custom-tree-node" slot-scope="{ node, data }">
+        <span>{{ node.label }}</span>
+        <span>
+          <el-button
+            v-if="node.level <= 2"
+            type="text"
+            size="mini"
+            @click="() => append(data)"
+          >Append</el-button>
+          <el-button
+            v-if="node.childNodes.length == 0"
+            type="text"
+            size="mini"
+            @click="() => remove(node, data)"
+          >Delete</el-button>
+        </span>
+      </span>
+    </el-tree>
   </div>
 </template>
 <script>
+import Vue from "vue";
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
 export default {
@@ -15,25 +40,34 @@ export default {
   //监控data中的数据变化
   data() {
     return {
-      data: [],
+      category: [],
       defaultProps: {
         children: "children",
-        label: "label"
+        label: "name"
       }
     };
   },
   methods: {
-    handleNodeClick(data) {
-      console.log(data);
-    },
     // 获取数据列表
     getCategoryData() {
       this.dataListLoading = true;
       this.$http({
         url: this.$http.adornUrl("/product/category/list/tree"),
         method: "get"
-      }).then(data => {
-        console.log(data);
+      }).then(({ data }) => {
+        this.category = data.data;
+      });
+    },
+    append(data) {},
+
+    remove(node, data) {
+      var ids = [data.catId];
+      this.$http({
+        url: this.$http.adornUrl("/product/category/delete"),
+        method: "post",
+        data: this.$http.adornData(ids, false)
+      }).then(({ data }) => {
+        console.log("删除成功");
       });
     }
   },

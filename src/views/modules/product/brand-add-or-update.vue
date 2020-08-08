@@ -3,7 +3,6 @@
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible"
-    :rules="dataRule"
   >
     <el-form
       :model="dataForm"
@@ -17,7 +16,7 @@
       </el-form-item>
       <el-form-item label="品牌logo地址" prop="logo">
         <!-- <el-input v-model="dataForm.logo" placeholder="品牌logo地址"></el-input> -->
-        <singleUpload v-model="dataForm.logo"></singleUpload>
+        <single-upload v-model="dataForm.logo"></single-upload>
       </el-form-item>
       <el-form-item label="介绍" prop="descript">
         <el-input v-model="dataForm.descript" placeholder="介绍"></el-input>
@@ -46,11 +45,9 @@
 </template>
 
 <script>
-import singleUpload from "@/components/upload/singleUpload";
+import SingleUpload from "@/components/upload/singleUpload";
 export default {
-  components: {
-    singleUpload
-  },
+  components: { SingleUpload },
   data() {
     return {
       visible: false,
@@ -59,9 +56,9 @@ export default {
         name: "",
         logo: "",
         descript: "",
-        showStatus: "",
+        showStatus: 1,
         firstLetter: "",
-        sort: ""
+        sort: 0
       },
       dataRule: {
         name: [{ required: true, message: "品牌名不能为空", trigger: "blur" }],
@@ -80,7 +77,6 @@ export default {
         ],
         firstLetter: [
           {
-            required: true,
             validator: (rule, value, callback) => {
               if (value == "") {
                 callback(new Error("首字母必须填写"));
@@ -95,11 +91,10 @@ export default {
         ],
         sort: [
           {
-            required: true,
             validator: (rule, value, callback) => {
               if (value == "") {
                 callback(new Error("排序字段必须填写"));
-              } else if (!Number.isInteger(value) || value < 0) {
+              } else if (!Number.isInteger(value) || value<0) {
                 callback(new Error("排序必须是一个大于等于0的整数"));
               } else {
                 callback();
@@ -126,13 +121,12 @@ export default {
             params: this.$http.adornParams()
           }).then(({ data }) => {
             if (data && data.code === 0) {
-              let brand = data.data;
-              this.dataForm.name = brand.name;
-              this.dataForm.logo = brand.logo;
-              this.dataForm.descript = brand.descript;
-              this.dataForm.showStatus = brand.showStatus;
-              this.dataForm.firstLetter = brand.firstLetter;
-              this.dataForm.sort = brand.sort;
+              this.dataForm.name = data.data.name;
+              this.dataForm.logo = data.data.logo;
+              this.dataForm.descript = data.data.descript;
+              this.dataForm.showStatus = data.data.showStatus;
+              this.dataForm.firstLetter = data.data.firstLetter;
+              this.dataForm.sort = data.data.sort;
             }
           });
         }

@@ -38,21 +38,15 @@
   </el-dialog>
 </template>
 
-<style>
-.el-cascader .el-input .el-input__inner {
-  width: 300px;
-}
-</style>
-
 <script>
-import CategoryCascader from "../common/category-cascader";
+import CategoryCascader from '../common/category-cascader'
 export default {
   data() {
     return {
-      props: {
-        value: "catId",
-        label: "name",
-        children: "children"
+      props:{
+        value:"catId",
+        label:"name",
+        children:"children"
       },
       visible: false,
       categorys: [],
@@ -80,13 +74,13 @@ export default {
       }
     };
   },
-  components: { CategoryCascader },
-
+  components:{CategoryCascader},
+  
   methods: {
-    dialogClose() {
+    dialogClose(){
       this.catelogPath = [];
     },
-    getCategorys() {
+    getCategorys(){
       this.$http({
         url: this.$http.adornUrl("/product/category/list/tree"),
         method: "get"
@@ -114,7 +108,7 @@ export default {
               this.dataForm.icon = data.data.icon;
               this.dataForm.catelogId = data.data.catelogId;
               //查出catelogId的完整路径
-              this.catelogPath = data.data.catelogPath;
+              this.catelogPath =  data.attrGroup.catelogPath;
             }
           });
         }
@@ -137,7 +131,7 @@ export default {
               sort: this.dataForm.sort,
               descript: this.dataForm.descript,
               icon: this.dataForm.icon,
-              catelogId: this.catelogPath[this.catelogPath.length - 1]
+              catelogId: this.catelogPath[this.catelogPath.length-1]
             })
           }).then(({ data }) => {
             if (data && data.code === 0) {
@@ -158,7 +152,7 @@ export default {
       });
     }
   },
-  created() {
+  created(){
     this.getCategorys();
   }
 };
